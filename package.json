@@ -4,12 +4,12 @@
   "description": "",
   "license": "ISC",
   "author": "",
-  "type": "module",
+  "type": "commonjs",
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "dev": "vercel dev",
-    "start": "node"
+    "start": "nodemon app.js"
   },
   "dependencies": {
     "bcrypt": "^6.0.0",

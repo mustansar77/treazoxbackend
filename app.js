@@ -1,59 +1,53 @@
-import express from "express";
-import bodyParser from "body-parser";
-import cors from "cors";
-import dotenv from "dotenv";
-import connectDB from "./config/database.js";
-import initializeAdmin from "./config/initAdmin.js";
-import userRoutes from "./routes/userRoutes.js";
+const express = require("express");
+const bodyParser = require("body-parser");
+const cors = require("cors");
+const dotenv = require("dotenv");
+const connectDB = require("./config/database");
+const userRoutes = require("./routes/userRoutes");
+const { initializeDefaults } = require("./config/initializers"); // your superadmin init
 
 dotenv.config();
-await connectDB(); // Make sure database connects before starting server
 
-const app = express();
+const startServer = async () => {
+  try {
+    await connectDB(); // Connect to DB first
 
-// const corsOptions = {
-//   origin:['https://treazox1.vercel.app',"http://localhost:3000"]
-// };
-// ✅ CORS Config
-// const corsOptions = {
-//   origin: ["https://treazox1.vercel.app", "http://localhost:3000"],
-//   methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
-//   credentials: true,
-// };
+    // Initialize superadmin before server starts
+    await initializeDefaults();
 
-const corsOptions = {
-  origin: ["https://treazox1.vercel.app", "http://localhost:3000"],
-  methods: ["GET","POST","PUT","DELETE","OPTIONS"],
-  credentials: true,
-};
-app.use(cors(corsOptions));
+    const app = express();
 
-// ✅ Parse JSON body
-app.use(bodyParser.json());
-app.use(bodyParser.urlencoded({ extended: true }));
+    const corsOptions = {
+      origin: ['https://recoverycircle.org', "http://localhost:3000"]
+    };
+    app.use(cors(corsOptions));
 
-// ✅ Routes
-app.use("/api/users", userRoutes);
+    app.use(bodyParser.json());
+    app.use(bodyParser.urlencoded({ extended: true }));
 
-// ✅ Root route
-app.get("/", (req, res) => {
-  res.json({
-    status: "ok",
-    message: "Treazox Backend is running 🚀",
-  });
-});
+    app.use("/api/users", userRoutes);
 
-// ✅ Catch-all for unsupported methods on API routes
-app.use("/api", (req, res, next) => {
-  const allowedMethods = ["GET", "POST", "PUT", "DELETE"];
-  if (!allowedMethods.includes(req.method)) {
-    return res.status(405).json({ message: "Method Not Allowed" });
+    app.get("/", (req, res) => {
+      res.json({ status: "ok", message: "Treazox Backend is running 🚀" });
+    });
+
+    app.use("/api", (req, res, next) => {
+      const allowedMethods = ["GET", "POST", "PUT", "DELETE"];
+      if (!allowedMethods.includes(req.method)) {
+        return res.status(405).json({ message: "Method Not Allowed" });
+      }
+      next();
+    });
+
+    const PORT = process.env.PORT || 5000;
+    app.listen(PORT, () => {
+      console.log(`Server running on port ${PORT}`);
+    });
+
+  } catch (error) {
+    console.error("Server failed to start:", error);
+    process.exit(1);
   }
-  next();
-});
-// ✅ Start server
-const PORT = process.env.PORT || 5000;
-app.listen(PORT, async () => {
-  console.log(`Server running on port ${PORT}`);
-  await initializeAdmin();
-});
+};
+
+startServer();

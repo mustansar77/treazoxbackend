@@ -1,16 +1,17 @@
-import mongoose from "mongoose";
-
-let isConnected = false;
+const mongoose = require('mongoose');
+const { initializeDefaults } = require('./initializers');
 
 const connectDB = async () => {
-  if (isConnected) return;
   try {
     await mongoose.connect(process.env.MONGO_URI);
-    isConnected = true;
-    console.log("MongoDB connected");
+    console.log('MongoDB connected');
+    
+    // Initialize superadmin after connection
+    await initializeDefaults();
   } catch (err) {
-    console.error("MongoDB connection error:", err);
+    console.error('Database connection error:', err.message);
+    process.exit(1);
   }
 };
 
-export default connectDB;
+module.exports = connectDB;
