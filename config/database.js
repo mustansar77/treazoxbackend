@@ -1,20 +1,18 @@
 import mongoose from "mongoose";
 
-let cached = global.mongoose;
-
-if (!cached) cached = global.mongoose = { conn: null, promise: null };
-
 const connectDB = async () => {
-  if (cached.conn) return cached.conn;
+  try {
+    if (!process.env.MONGO_URI) {
+      throw new Error("MONGO_URI is not defined in environment variables");
+    }
 
-  if (!cached.promise) {
-    cached.promise = mongoose.connect(process.env.MONGO_URI, {
-      bufferCommands: false
-    });
+    await mongoose.connect(process.env.MONGO_URI);
+
+    console.log("MongoDB connected");
+  } catch (err) {
+    console.error("Database connection error:", err.message);
+    process.exit(1); // Exit the process if DB connection fails
   }
-
-  cached.conn = await cached.promise;
-  return cached.conn;
 };
 
 export default connectDB;

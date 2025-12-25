@@ -10,23 +10,29 @@ const userSchema = new mongoose.Schema(
     referralCode: { type: String, unique: true },
     referredBy: { type: mongoose.Schema.Types.ObjectId, ref: "User", default: null },
     role: { type: String, enum: ["user", "admin"], default: "user" },
-    isActive: { type: Boolean, default: true }
+    isActive: { type: Boolean, default: true },
+    walletInfo: { type: Number, default: 0 }
   },
   { timestamps: true }
 );
 
-userSchema.pre("save", async function (next) {
-  if (!this.isModified("password")) return next();
-  this.password = await bcrypt.hash(this.password, 12);
-  next();
+// ✅ Hash password before saving
+userSchema.pre("save", async function () {
+  if (this.isModified("password")) {
+    this.password = await bcrypt.hash(this.password, 12);
+  }
+
+  // Generate referral code if not exists
+  if (!this.referralCode) {
+    this.referralCode = `${this._id.toString().slice(-6)}${Math.floor(1000 + Math.random() * 9000)}`;
+  }
 });
 
+// ✅ Compare password method
 userSchema.methods.comparePassword = async function (password) {
   return bcrypt.compare(password, this.password);
 };
 
-userSchema.methods.generateReferralCode = function () {
-  return `${this._id.toString().slice(-6)}${Math.floor(1000 + Math.random() * 9000)}`;
-};
-
-export default mongoose.models.User || mongoose.model("User", userSchema);
+// ✅ Export model (avoid recompiling model in Next.js hot reload)
+const User = mongoose.models.User || mongoose.model("User", userSchema);
+export default User;
