@@ -18,7 +18,7 @@ const startServer = async () => {
     const app = express();
 
     const corsOptions = {
-      origin: ['https://recoverycircle.org', "http://localhost:3000"]
+      origin: ['https://treazox1.vercel.app', "http://localhost:3000"]
     };
     app.use(cors(corsOptions));
 
