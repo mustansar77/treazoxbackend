@@ -11,12 +11,15 @@ await connectDB(); // Make sure database connects before starting server
 
 const app = express();
 
-// ✅ CORS Config
 const corsOptions = {
-  origin: ["https://treazox1.vercel.app", "http://localhost:3000"],
-  methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
-  credentials: true,
+  origin:['https://treazox1.vercel.app',"http://localhost:3000"]
 };
+// ✅ CORS Config
+// const corsOptions = {
+//   origin: ["https://treazox1.vercel.app", "http://localhost:3000"],
+//   methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
+//   credentials: true,
+// };
 app.use(cors(corsOptions));
 
 // ✅ Parse JSON body
