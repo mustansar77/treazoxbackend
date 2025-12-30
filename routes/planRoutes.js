@@ -6,10 +6,11 @@ import { authMiddleware, adminMiddleware } from "../middleware/authMiddleware.js
 const router = express.Router();
 
 // ----- Admin Routes -----
-router.post("/", adminMiddleware, createPlan); // Admin create
-router.get("/", adminMiddleware, getPlans); // Admin view
-router.put("/", adminMiddleware, updatePlan); // Admin update
-router.delete("/", adminMiddleware, deletePlan); // Admin delete
+router.post("/", authMiddleware, adminMiddleware, createPlan);
+router.get("/", authMiddleware, adminMiddleware, getPlans);
+router.put("/", authMiddleware, adminMiddleware, updatePlan);
+router.delete("/", authMiddleware, adminMiddleware, deletePlan);
+
 
 // ----- User Routes -----
 router.get("/all", authMiddleware, getPlans); // Users can view all plans
