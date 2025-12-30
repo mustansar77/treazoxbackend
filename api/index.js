@@ -9,6 +9,8 @@ import investmentRoutes from "../routes/investmentRoutes.js"
 import withdrawRoutes from "../routes/withdrawRoutes.js"
 import depositRoutes from "../routes/depositRoutes.js"
 import luckyDrawRoutes from "../routes/luckyDrawRoutes.js"
+import accountHistoryRoutes from "../routes/accountHistoryRoutes.js"
+
 
 
 
@@ -52,6 +54,8 @@ app.use("/api/investment",investmentRoutes );
 app.use("/api/withdraw",withdrawRoutes );
 app.use("/api/deposit",depositRoutes );
 app.use("/api/luckydraw",luckyDrawRoutes );
+app.use("/api/accounthistory",accountHistoryRoutes );
+
 
 
 
