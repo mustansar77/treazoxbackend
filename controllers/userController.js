@@ -177,3 +177,52 @@ export const getMe = async (req, res) => {
   }
 };
 
+
+
+
+// ====================== Team API ======================
+
+/**
+ * Recursive function to get all direct and indirect referrals of a user
+ * @param {string} referralCode - Referral code of the user
+ * @param {number} level - 0 = direct, 1 = indirect, etc.
+ * @param {array} result - accumulator for results
+ */
+const getReferrals = async (referralCode, level = 0, result = []) => {
+  const users = await User.find({ referredBy: referralCode }).select(
+    "fullName email referralCode balance"
+  );
+
+  for (const user of users) {
+    result.push({
+      level, // 0 = direct, 1 = indirect, etc.
+      fullName: user.fullName,
+      email: user.email,
+      referralCode: user.referralCode,
+      balance: user.balance,
+    });
+
+    // Recursively fetch referrals of this user
+    await getReferrals(user.referralCode, level + 1, result);
+  }
+
+  return result;
+};
+
+/**
+ * GET /api/users/team
+ * Fetch all direct and indirect referrals of logged-in user
+ */
+export const getTeam = async (req, res) => {
+  try {
+    const user = req.user; // Already populated by verifyToken middleware
+    if (!user) return res.status(404).json({ message: "User not found" });
+
+    const team = await getReferrals(user.referralCode);
+
+    res.status(200).json({ success: true, team });
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ success: false, message: err.message });
+  }
+};
