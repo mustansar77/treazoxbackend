@@ -33,7 +33,7 @@ export const createInvestment = async (req, res) => {
 export const getAllInvestments = async (req, res) => {
   try {
     const investments = await Investment.find()
-      .populate("user", "name email")
+      .populate("user", "fullName email")
       .populate("plan", "totalPrice duration dailyEarning");
     res.status(200).json({ success: true, investments });
   } catch (error) {
