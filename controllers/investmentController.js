@@ -3,7 +3,7 @@ import User from "../models/User.js";
 import Plan from "../models/Plan.js";
 import { distributeReferralCommission } from "../utils/referralCommission.js";
 
-// User creates investment
+// USER CREATE INVESTMENT
 export const createInvestment = async (req, res) => {
   try {
     const { planId, trxId, exchange } = req.body;
@@ -28,16 +28,16 @@ export const createInvestment = async (req, res) => {
   }
 };
 
-// Admin get all investments
+// ADMIN GET ALL
 export const getAllInvestments = async (req, res) => {
   const investments = await Investment.find()
-    .populate("user", "fullName email referralCode")
+    .populate("user", "fullName email")
     .populate("plan", "totalPrice duration");
 
   res.json({ success: true, investments });
 };
 
-// Admin approve / reject
+// ADMIN APPROVE / REJECT
 export const updateInvestmentStatus = async (req, res) => {
   try {
     const { id, status } = req.body;
@@ -49,12 +49,14 @@ export const updateInvestmentStatus = async (req, res) => {
     if (status === "approved") {
       investment.status = "approved";
       investment.startDate = new Date();
+    investment.lastEarningAt = null;
+
       investment.endDate = new Date(
         Date.now() + investment.duration * 24 * 60 * 60 * 1000
       );
+
       await investment.save();
 
-      // 🔥 REFERRAL COMMISSION
       const buyer = await User.findById(investment.user);
       await distributeReferralCommission(buyer, investment.price);
     }

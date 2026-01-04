@@ -10,6 +10,7 @@ import withdrawRoutes from "../routes/withdrawRoutes.js"
 import depositRoutes from "../routes/depositRoutes.js"
 import luckyDrawRoutes from "../routes/luckyDrawRoutes.js"
 import accountHistoryRoutes from "../routes/accountHistoryRoutes.js"
+import cronRoutes from "../routes/cronRoutes.js"
 
 
 
@@ -55,6 +56,7 @@ app.use("/api/withdraw",withdrawRoutes );
 app.use("/api/deposit",depositRoutes );
 app.use("/api/luckydraw",luckyDrawRoutes );
 app.use("/api/accounthistory",accountHistoryRoutes );
+app.use("/api/cron", cronRoutes);
 
 
 
@@ -69,5 +71,6 @@ await initAdmin();
 app.get("/", (req, res) => {
   res.json({ success: true, message: "Backend running on Vercel 🚀" });
 });
+
 
 export default app; // ESM export
