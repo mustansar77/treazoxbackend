@@ -12,13 +12,13 @@ export const runDailyEarnings = async (req, res) => {
     });
 
     for (const inv of investments) {
-      // Check 24 hours gap
-      if (inv.lastEarningAt) {
-        const diffHours =
-          (now - new Date(inv.lastEarningAt)) / (1000 * 60 * 60);
+    //   // Check 24 hours gap
+    //   if (inv.lastEarningAt) {
+    //     const diffHours =
+    //       (now - new Date(inv.lastEarningAt)) / (1000 * 60 * 60);
 
-        if (diffHours < 24) continue; // skip if not 24h passed
-      }
+    //     if (diffHours < 24) continue; // skip if not 24h passed
+    //   }
 
       // Credit user
       const user = await User.findById(inv.user);
