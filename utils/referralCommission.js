@@ -8,8 +8,8 @@ export const distributeReferralCommission = async (buyer, amount) => {
   if (!level1) return;
 
   const lvl1Amount = amount * 0.1;
-  level1.balance += lvl1Amount;
-  level1.commissionBalance += lvl1Amount;
+  level1.balance += lvl1Amount;           // actually usable
+  level1.commissionBalance += lvl1Amount; // for display
   await level1.save();
 
   // LEVEL 2 – 4%
