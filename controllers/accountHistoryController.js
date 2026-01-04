@@ -2,6 +2,7 @@ import Deposit from "../models/Deposit.js";
 import Withdraw from "../models/Withdraw.js";
 import LuckyDraw from "../models/LuckyDraw.js";
 import Investment from "../models/Investment.js";
+import User from "../models/User.js";
 
 export const getAccountHistory = async (req, res) => {
   try {
@@ -10,11 +11,9 @@ export const getAccountHistory = async (req, res) => {
     const deposits = await Deposit.find({ user: userId }).lean();
     const withdraws = await Withdraw.find({ user: userId }).lean();
     const investments = await Investment.find({ user: userId }).lean();
-
     const luckyDraws = await LuckyDraw.find({
       "participants.userId": userId,
     }).lean();
-
     const wins = await LuckyDraw.find({
       "winners.userId": userId,
     }).lean();
@@ -43,16 +42,40 @@ export const getAccountHistory = async (req, res) => {
       });
     });
 
-    // Investments
-    // investments.forEach((i) => {
-    //   history.push({
-    //     type: "investment",
-    //     amount: i.amount,
-    //     status: i.status,
-    //     description: "Investment created",
-    //     createdAt: i.createdAt,
-    //   });
-    // });
+    // Investments (initial creation)
+    investments.forEach((i) => {
+      history.push({
+        type: "investment",
+        amount: i.price,
+        status: i.status,
+        description: "Investment created",
+        createdAt: i.createdAt,
+      });
+
+      // Daily earnings
+      if (i.lastEarningAt && i.dailyEarning > 0) {
+        // Calculate number of earnings received so far
+        const now = new Date();
+        const startDate = i.startDate ? new Date(i.startDate) : new Date();
+        let daysEarned = i.lastEarningAt
+          ? Math.floor((new Date(i.lastEarningAt) - startDate) / (1000 * 60 * 60 * 24))
+          : 0;
+
+        // Add each daily earning as a separate entry
+        for (let day = 1; day <= daysEarned; day++) {
+          const earningDate = new Date(startDate);
+          earningDate.setDate(earningDate.getDate() + day);
+
+          history.push({
+            type: "daily_earning",
+            amount: i.dailyEarning,
+            status: "credited",
+            description: `Daily earning from investment`,
+            createdAt: earningDate,
+          });
+        }
+      }
+    });
 
     // Lucky draw join (payment)
     luckyDraws.forEach((d) => {
