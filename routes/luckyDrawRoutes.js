@@ -19,6 +19,8 @@ router.delete("/:id", authMiddleware, adminMiddleware, deleteLuckyDraw);
 
 /* ===== User ===== */
 router.get("/", authMiddleware, getActiveLuckyDraws);
+router.get("/withoutlogin", getActiveLuckyDraws);
+
 router.get("/wins", authMiddleware, getLuckyDrawWinHistory);
 router.post("/participate/:drawId", authMiddleware, participateLuckyDraw);
 
