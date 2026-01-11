@@ -1,7 +1,7 @@
 import express from "express";
 import cors from "cors";
 import dotenv from "dotenv";
-
+import path from "path";
 import connectDB from "../config/db.js";
 import userRoutes from "../routes/userRoutes.js";
 import planRoutes from "../routes/planRoutes.js";
@@ -57,6 +57,8 @@ app.use("/api/deposit",depositRoutes );
 app.use("/api/luckydraw",luckyDrawRoutes );
 app.use("/api/accounthistory",accountHistoryRoutes );
 app.use("/api/cron", cronRoutes);
+app.use("/uploads", express.static(path.join(process.cwd(), "uploads")));
+
 
 
 

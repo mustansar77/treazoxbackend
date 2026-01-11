@@ -15,7 +15,10 @@ const userSchema = new mongoose.Schema(
 
     balance: { type: Number, default: 0 },            // main wallet
     commissionBalance: { type: Number, default: 0 },  // referral earnings
-
+ avatar: {
+    type: String, // store image path
+    default: "",
+  },
     isActive: { type: Boolean, default: true },
   },
   { timestamps: true }

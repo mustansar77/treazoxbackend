@@ -3,13 +3,20 @@ import { signup, login, updateBalance,getMe ,  getAllUsers,
   createUser,
   updateUser,
   deleteUser,
-  changeUserPassword, getTeam,getMyActiveInvestments} from "../controllers/userController.js";
+  changeUserPassword, getTeam,getMyActiveInvestments,uploadUserAvatar} from "../controllers/userController.js";
 import { authMiddleware, adminMiddleware } from "../middleware/authMiddleware.js";
+import { uploadAvatar } from "../middleware/uploadAvatar.js";
 
 const router = express.Router();
 
 router.post("/signup", signup);
 router.post("/login", login);
+router.put(
+  "/upload-avatar",
+  authMiddleware,
+  uploadAvatar.single("avatar"),
+  uploadUserAvatar
+);
 router.get("/admin", authMiddleware, adminMiddleware, getAllUsers);
 router.post("/admin", authMiddleware, adminMiddleware, createUser);
 router.put("/admin/:id", authMiddleware, adminMiddleware, updateUser);
